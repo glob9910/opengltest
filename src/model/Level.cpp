@@ -19,6 +19,8 @@ public:
     std::vector<Model*>* modelsForOurShader;
     std::vector<std::pair<Shader*, std::vector<Model*>*>*>* toRender;
 
+    GLFWwindow *window;
+
     Shader* ourShader;
     Shader* lightShader;
     Shader* modelShader;
@@ -26,7 +28,8 @@ public:
     Renderer* renderer;
 
 
-    Level(int SCR_WIDTH, int SCR_HEIGHT) {
+    Level(int SCR_WIDTH, int SCR_HEIGHT, GLFWwindow *window) {
+        this->window = window;
         ourShader = new Shader("src/model/shaders/shader.vs", "src/model/shaders/shader.fs");
         lightShader = new Shader("src/model/shaders/lightShader.vs", "src/model/shaders/lightShader.fs");
         modelShader = new Shader("src/model/shaders/modelShader.vs", "src/model/shaders/modelShader.fs");
@@ -53,6 +56,7 @@ public:
     }
 
     void render(Camera* camera) {
+        processAction(window);
         renderer->render(toRender, lights, camera);
     }
 
@@ -74,7 +78,7 @@ protected:
 
         for(PointLight* pointLight : *pointLights) {
             modelsForLightShader->push_back(pointLight->getModel());
-            lights->push_back(createPointLight(glm::vec3(0.0f, 0.0f, 0.0f)));
+            lights->push_back(pointLight);
         }
     }
 
@@ -129,5 +133,28 @@ protected:
         modelsForOurShader->push_back(createBox(glm::vec3( 1.3f, -2.0f, -2.5f)));
         modelsForOurShader->push_back(createBox(glm::vec3( 1.5f,  2.0f, -2.5f)));
         modelsForOurShader->push_back(createBox(glm::vec3( 1.5f,  0.2f, -1.5f)));
+    }
+
+    void processAction(GLFWwindow *window) {
+        const float speed = 0.5f;
+        PointLight* light = (PointLight*)lights->at(1);
+
+
+        if(glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
+            light->position.x -= speed;
+            light->model->position.x -= speed;
+        }
+        if(glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+            light->position.x += speed;
+            light->model->position.x += speed;
+        }
+        if(glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
+            light->position.y -= speed;
+            light->model->position.y -= speed;
+        }
+        if(glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+            light->position.y += speed;
+            light->model->position.y += speed;
+        }
     }
 };

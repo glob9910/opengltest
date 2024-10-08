@@ -51,7 +51,7 @@ public:
 
         camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
-        Level* level = new Level(SCR_WIDTH, SCR_HEIGHT);
+        Level* level = new Level(SCR_WIDTH, SCR_HEIGHT, window);
 
 
         while(!glfwWindowShouldClose(window)) {
